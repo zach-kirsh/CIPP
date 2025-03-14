@@ -1,14 +1,5 @@
 import PropTypes from "prop-types";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Divider,
-  formControlLabelClasses,
-  Stack,
-  SvgIcon,
-  Typography,
-} from "@mui/material";
+import { Card, CardContent, CardHeader, Divider, Stack, SvgIcon, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import {
   Timeline,
@@ -24,7 +15,7 @@ import { ActionListItem } from "/src/components/action-list-item";
 import CheckIcon from "@heroicons/react/24/outline/CheckIcon";
 import CloseIcon from "@mui/icons-material/Close";
 import { useWatch } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import _ from "lodash";
 import CippFormComponent from "/src/components/CippComponents/CippFormComponent";
 import { CippFormTenantSelector } from "../CippComponents/CippFormTenantSelector";
@@ -127,11 +118,21 @@ const CippStandardsSideBar = ({
             fullWidth
           />
           <Divider />
+          <CippFormComponent
+            type="richText"
+            name="description"
+            label="Description"
+            formControl={formControl}
+            placeholder="Enter a description for the template"
+            fullWidth
+          />
+          <Divider />
           <CippFormTenantSelector
             allTenants={true}
             label="Included Tenants"
             formControl={formControl}
             required={true}
+            includeGroups={true}
           />
           {watchForm.tenantFilter?.some((tenant) => tenant.value === "AllTenants") && (
             <>
@@ -225,6 +226,7 @@ const CippStandardsSideBar = ({
           data: {
             tenantFilter: "tenantFilter",
             excludedTenants: "excludedTenants",
+            description: "description",
             templateName: "templateName",
             standards: "standards",
             ...(edit ? { GUID: "GUID" } : {}),
