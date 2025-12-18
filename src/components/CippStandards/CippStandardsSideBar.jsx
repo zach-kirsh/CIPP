@@ -418,9 +418,10 @@ const CippStandardsSideBar = ({
           {/* Show drift error */}
           {isDriftMode && driftError && <Alert severity="error">{driftError}</Alert>}
 
-          {watchForm.tenantFilter?.some(
+          {(watchForm.tenantFilter?.some(
             (tenant) => tenant.value === "AllTenants" || tenant.type === "Group"
-          ) && (
+          ) ||
+            (watchForm.excludedTenants && watchForm.excludedTenants.length > 0)) && (
             <>
               <Divider />
               <CippFormTenantSelector
@@ -452,6 +453,22 @@ const CippStandardsSideBar = ({
                 placeholder="Enter email address for drift alerts. Leave blank to use the default email address."
                 fullWidth
               />
+              <CippFormComponent
+                type="switch"
+                name="driftAlertDisableEmail"
+                label="Disable All Notifications"
+                formControl={formControl}
+                fullWidth
+              />
+              <Typography
+                sx={{
+                  color: "text.secondary",
+                }}
+                variant="caption"
+              >
+                When enabled, all drift alert notifications (email, webhook, and PSA) will be
+                disabled.
+              </Typography>
             </>
           )}
           {/* Hide schedule options in drift mode */}
@@ -561,6 +578,7 @@ const CippStandardsSideBar = ({
                   type: "drift",
                   driftAlertWebhook: "driftAlertWebhook",
                   driftAlertEmail: "driftAlertEmail",
+                  driftAlertDisableEmail: "driftAlertDisableEmail",
                 }
               : {}),
           },
