@@ -38,6 +38,12 @@ const Page = () => {
     queryKey: "authmecipp",
   });
 
+  // Test suites for the default Home page suite selector (shared cache with the dashboard)
+  const reportsApi = ApiGetCall({
+    url: "/api/ListTestReports",
+    queryKey: "ListTestReports",
+  });
+
   const cleanedSettings = { ...settings };
 
   if (cleanedSettings.offboardingDefaults?.keepCopy) {
@@ -183,47 +189,47 @@ const Page = () => {
   const portalLinksConfig = [
     {
       name: "portalLinks.M365_Portal",
-      label: "M365 Portal",
+      label: "M365",
     },
     {
       name: "portalLinks.Exchange_Portal",
-      label: "Exchange Portal",
+      label: "Exchange",
     },
     {
       name: "portalLinks.Entra_Portal",
-      label: "Entra Portal",
+      label: "Entra",
     },
     {
       name: "portalLinks.Teams_Portal",
-      label: "Teams Portal",
+      label: "Teams",
     },
     {
       name: "portalLinks.Azure_Portal",
-      label: "Azure Portal",
+      label: "Azure",
     },
     {
       name: "portalLinks.Intune_Portal",
-      label: "Intune Portal",
+      label: "Intune",
     },
     {
       name: "portalLinks.SharePoint_Admin",
-      label: "SharePoint Admin",
+      label: "SharePoint",
     },
     {
       name: "portalLinks.Security_Portal",
-      label: "Security Portal",
+      label: "Security",
     },
     {
       name: "portalLinks.Compliance_Portal",
-      label: "Compliance Portal",
+      label: "Purview",
     },
     {
       name: "portalLinks.Power_Platform_Portal",
-      label: "Power Platform Portal",
+      label: "Power Platform",
     },
     {
       name: "portalLinks.Power_BI_Portal",
-      label: "Power BI Portal",
+      label: "Power BI",
     },
   ];
 
@@ -284,6 +290,42 @@ const Page = () => {
                               validators={{
                                 required: { value: true, message: "This field is required" },
                               }}
+                            />
+                          ),
+                        },
+                        {
+                          label: "Table view on small screens",
+                          value: (
+                            <CippFormComponent
+                              type="autoComplete"
+                              creatable={false}
+                              disableClearable={true}
+                              defaultValue={{ value: "auto", label: "Automatic (cards on mobile)" }}
+                              name="tableViewMode"
+                              formControl={formcontrol}
+                              multiple={false}
+                              options={[
+                                { value: "auto", label: "Automatic (cards on mobile)" },
+                                { value: "cards", label: "Always card list" },
+                                { value: "table", label: "Always classic table" },
+                              ]}
+                            />
+                          ),
+                        },
+                        {
+                          label: "Default test suite on the Home page",
+                          value: (
+                            <CippFormComponent
+                              type="autoComplete"
+                              creatable={false}
+                              name="defaultTestSuite"
+                              formControl={formcontrol}
+                              multiple={false}
+                              options={(reportsApi.data || []).map((report) => ({
+                                value: report.id,
+                                label: report.name,
+                              }))}
+                              isFetching={reportsApi.isFetching}
                             />
                           ),
                         },
@@ -363,7 +405,10 @@ const Page = () => {
                         },
                       ]}
                     />
-                    <CippOffboardingDefaultSettings formControl={formcontrol} />
+                    <CippOffboardingDefaultSettings
+                      formControl={formcontrol}
+                      defaultsSource={cleanedSettings.offboardingDefaultsSource}
+                    />
                   </Stack>
                 </Grid>
                 <Grid size={{ xs: 12, lg: 4 }}>

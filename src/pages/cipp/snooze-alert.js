@@ -6,7 +6,7 @@ import { ApiPostCall } from '../../api/ApiCall'
 import { CippApiResults } from '../../components/CippComponents/CippApiResults'
 import CippPageCard from '../../components/CippCards/CippPageCard'
 
-const VALID_DURATIONS = [7, 14, 30, -1]
+const VALID_DURATIONS = [7, 14, 30, 90, -1]
 
 const durationLabel = (d) => {
   if (d === -1) return 'forever'
@@ -15,7 +15,7 @@ const durationLabel = (d) => {
 
 const Page = () => {
   const router = useRouter()
-  const { cmdlet, tenant, data, duration } = router.query
+  const { cmdlet, tenant, data, duration, reason } = router.query
   const [submitted, setSubmitted] = useState(false)
   const [parseError, setParseError] = useState(null)
 
@@ -54,9 +54,10 @@ const Page = () => {
         TenantFilter: tenant,
         AlertItem: alertItem,
         Duration: durationNum,
+        Reason: reason || '',
       },
     })
-  }, [router.isReady, cmdlet, tenant, data, duration])
+  }, [router.isReady, cmdlet, tenant, data, duration, reason])
 
   const preview = (() => {
     if (!data) return null

@@ -8,6 +8,10 @@ import { Box, Container, Stack } from '@mui/system'
 import { CippHead } from '../../../../components/CippComponents/CippHead.jsx'
 import { CippDataTable } from '../../../../components/CippTable/CippDataTable.js'
 import CippFormComponent from '../../../../components/CippComponents/CippFormComponent'
+import {
+  CippAnonymizedReportAlert,
+  isReportAnonymized,
+} from '../../../../components/CippComponents/CippAnonymizedReportAlert'
 
 // Convert camelCase report names like "getMailboxUsageDetail" → "Mailbox Usage Detail"
 // Uses the same acronym-aware splitting as getCippTranslation
@@ -64,7 +68,7 @@ const Page = () => {
     waiting: !!currentTenant,
   })
 
-  const reportOptions = (reportListApi.data ?? []).map((r) => ({
+  const reportOptions = (Array.isArray(reportListApi.data) ? reportListApi.data : []).map((r) => ({
     label: prettifyReportName(r.name),
     value: r.name,
     type: r.type ?? null,
@@ -91,7 +95,7 @@ const Page = () => {
           <Stack spacing={2}>
             {/* Toolbar */}
             <Card sx={{ p: 2 }}>
-              <Stack direction="row" spacing={2} alignItems="flex-start" flexWrap="wrap">
+              <Stack useFlexGap direction="row" columnGap={2} rowGap={1} alignItems="flex-start" flexWrap="wrap">
                 <Box sx={{ minWidth: 260 }}>
                   <CippFormComponent
                     name="source"
@@ -148,6 +152,14 @@ const Page = () => {
               <Alert severity="info">Select a report above to load data.</Alert>
             )}
             {currentTenant && report && (
+              <CippAnonymizedReportAlert
+                show={
+                  !reportDataApi.isFetching &&
+                  isReportAnonymized(Array.isArray(reportDataApi.data) ? reportDataApi.data : [])
+                }
+              />
+            )}
+            {currentTenant && report && (
               <Card>
                 {reportDataApi.isError ? (
                   <Alert severity="error" sx={{ m: 2 }}>
@@ -156,7 +168,7 @@ const Page = () => {
                 ) : (
                   <CippDataTable
                     title={`${prettifyReportName(report)}${showPeriod ? ` (${period})` : ''}`}
-                    data={reportDataApi.data ?? []}
+                    data={Array.isArray(reportDataApi.data) ? reportDataApi.data : []}
                     isFetching={reportDataApi.isFetching}
                     simple={false}
                     reportTitle={`${source}-${report}`}
